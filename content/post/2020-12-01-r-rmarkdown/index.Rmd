@@ -1,0 +1,133 @@
+---
+title: "Making Maps about Trees"
+author: "Ingrid Zoll"
+date: 2020-07-16T21:13:14-05:00
+categories: ["R"]
+tags: ["R Markdown", "Mapping", "Trees"]
+header:
+  caption: ""
+  image: tree.jpg
+---
+
+One of my favorite R data packages is pdxTrees. I've used it in many of my classes, and this summer, it became immensely useful in my research. Here's the short version: western red cedar trees are dying, and we're not sure why. Figuring out "why" is a long and intense process, but the first step was figuring out where the trees are located. Thanks to pdxTrees, I can easily find where all of the western redcedar trees in Portland are! Using this, I made two different leaflet maps. You can check them out below, as well as the code I used for the maps!
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(leaflet)
+library(pdxTrees)
+library(forcats)
+library(widgetframe)
+```
+
+# Western Redcedar trees in Portland Oregon
+### Data from the Portland Parks Tree Inventory
+
+```{r data wrangling}
+#order: lon, lat, species, date, condition, common name, scientific name, family, collected by
+
+parks<-get_pdxTrees_parks() #full data
+
+
+smallparks <- parks %>%
+  select(1, 2, 8, 7, 10, 9, 17, 5, 15, 6) %>% #select columns, reorder
+  mutate(source="park")
+
+streets<-get_pdxTrees_streets() #full data
+
+smallstreets<- streets %>%
+  select(22, 23, 3, 2, 5, 18, 15, 16, 14, 4) %>% #select columns, reorder 
+  rename("Scientific_Name"="Scientific") %>%
+  mutate(source="street")
+
+
+pdxTrees <- bind_rows(smallparks, smallstreets) #join
+```
+
+```{r THPL wrangling}
+thpl <- pdxTrees %>%
+  filter(Species=="THPL") %>%
+  filter(!is.na(Collected_By))
+
+thpl$Condition <- factor(thpl$Condition) %>%
+  fct_relevel(c("Good", "Fair", "Poor"))
+
+thplgood <- thpl %>%
+  filter(Condition =="Good")
+
+thplfair <- thpl %>%
+  filter(Condition =="Fair")
+
+thplpoor <- thpl %>%
+  filter(Condition =="Poor")
+```
+
+## Map 1
+
+If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).
+
+```{r map 1, message=FALSE, warning=FALSE}
+#create color palette for condition
+pal <- colorFactor(c("goldenrod1", "forestgreen", "tomato"), 
+                   domain = c("Good", "Fair", "Poor"))
+
+#creating map 1
+map1 <- leaflet(data = thpl, options = leafletOptions(minZoom = 10, maxZoom = 21)) %>% 
+  setView(lng = -122.6, lat = 45.5, zoom = 11) %>%
+  addProviderTiles(providers$Stamen.Toner) %>%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+             popup=paste("Collected by:", thpl$Collected_By, "<br>",
+                           "Date:", thpl$Inventory_Date, "<br>",
+                           "DBH:", thpl$DBH), 
+             color=~pal(Condition), 
+             clusterOptions = markerClusterOptions(disableClusteringAtZoom=14), 
+             stroke = TRUE, fillOpacity = 0.7, radius = 3) %>%
+  addLegend("bottomright", pal = pal, 
+            values= ~Condition,
+            title = "Condition",
+            opacity = 1)
+
+frameWidget(map1, width = "100%")
+```
+
+## Map 2
+
+If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).
+
+You can also sort the map by condition by checking/unchecking the boxes in the upper righthand corner
+
+```{r map 2, message=FALSE, warning=FALSE}
+#creating map 2
+map2 <- leaflet(options = leafletOptions(minZoom = 11, maxZoom = 21)) %>%
+  addTiles() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
+      popup=paste("Collected by:", thplgood$Collected_By, "<br>",
+                           "Date:", thplgood$Inventory_Date, "<br>",
+                           "DBH:", thplgood$DBH),
+      data = thplgood, radius = 4,
+      color = "forestgreen", stroke=FALSE,
+      fillOpacity = 0.6, 
+      group = "Good") %>%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+      popup=paste("Collected by:", thplfair$Collected_By, "<br>",
+                           "Date:", thplfair$Inventory_Date, "<br>",
+                           "DBH:", thplfair$DBH),
+      data = thplfair, radius = 4,
+      color = "gold", stroke=FALSE,
+      fillOpacity = 0.6,
+      group = "Fair") %>%
+   addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+      popup=paste("Collected by:", thplpoor$Collected_By, "<br>",
+                           "Date:", thplpoor$Inventory_Date, "<br>",
+                           "DBH:", thplpoor$DBH),
+      data = thplpoor, radius = 4,
+      color = "tomato", stroke=FALSE,
+      fillOpacity = 0.6,
+      group = "Poor") %>%
+ addLayersControl(
+      overlayGroups = c("Good", "Fair", "Poor"),
+      options = layersControlOptions(collapsed = FALSE))
+
+frameWidget(map2, width = "100%")
+```
+

@@ -24,14 +24,14 @@ date_format: Jan 2006
 #   Leave other parameters empty if not required.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 item:
-- certificate_url: 
+- certificate_url: https://github.com/Reed-Statistics/data-viz-competition-2020/blob/main/winning%20plots/mlab_plot.jpg
   date_end: ""
   date_start: "2020-11-02"
   description: 
   organization: Data Visualization Contest, Reed College Statistics Department 
   organization_url: 
   title: Most Informative Data Visualization
-  url: ""
+  url: 
 - certificate_url: 
   date_end: ""
   date_start: "2020-09-02"

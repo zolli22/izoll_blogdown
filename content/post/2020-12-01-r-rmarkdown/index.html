@@ -1,0 +1,129 @@
+---
+title: "Making Maps about Trees"
+author: "Ingrid Zoll"
+date: 2020-07-16T21:13:14-05:00
+categories: ["R"]
+tags: ["R Markdown", "Mapping", "Trees"]
+header:
+  caption: ""
+  image: tree.jpg
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+<script src="{{< blogdown/postref >}}index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="{{< blogdown/postref >}}index_files/pymjs/pym.v1.js"></script>
+<script src="{{< blogdown/postref >}}index_files/widgetframe-binding/widgetframe.js"></script>
+
+
+<p>One of my favorite R data packages is pdxTrees. I’ve used it in many of my classes, and this summer, it became immensely useful in my research. Here’s the short version: western red cedar trees are dying, and we’re not sure why. Figuring out “why” is a long and intense process, but the first step was figuring out where the trees are located. Thanks to pdxTrees, I can easily find where all of the western redcedar trees in Portland are! Using this, I made two different leaflet maps. You can check them out below, as well as the code I used for the maps!</p>
+<pre class="r"><code>library(tidyverse)
+library(leaflet)
+library(pdxTrees)
+library(forcats)
+library(widgetframe)</code></pre>
+<div id="western-redcedar-trees-in-portland-oregon" class="section level1">
+<h1>Western Redcedar trees in Portland Oregon</h1>
+<div id="data-from-the-portland-parks-tree-inventory" class="section level3">
+<h3>Data from the Portland Parks Tree Inventory</h3>
+<pre class="r"><code>#order: lon, lat, species, date, condition, common name, scientific name, family, collected by
+
+parks&lt;-get_pdxTrees_parks() #full data
+
+
+smallparks &lt;- parks %&gt;%
+  select(1, 2, 8, 7, 10, 9, 17, 5, 15, 6) %&gt;% #select columns, reorder
+  mutate(source=&quot;park&quot;)
+
+streets&lt;-get_pdxTrees_streets() #full data
+
+smallstreets&lt;- streets %&gt;%
+  select(22, 23, 3, 2, 5, 18, 15, 16, 14, 4) %&gt;% #select columns, reorder 
+  rename(&quot;Scientific_Name&quot;=&quot;Scientific&quot;) %&gt;%
+  mutate(source=&quot;street&quot;)
+
+
+pdxTrees &lt;- bind_rows(smallparks, smallstreets) #join</code></pre>
+<pre class="r"><code>thpl &lt;- pdxTrees %&gt;%
+  filter(Species==&quot;THPL&quot;) %&gt;%
+  filter(!is.na(Collected_By))
+
+thpl$Condition &lt;- factor(thpl$Condition) %&gt;%
+  fct_relevel(c(&quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;))
+
+thplgood &lt;- thpl %&gt;%
+  filter(Condition ==&quot;Good&quot;)
+
+thplfair &lt;- thpl %&gt;%
+  filter(Condition ==&quot;Fair&quot;)
+
+thplpoor &lt;- thpl %&gt;%
+  filter(Condition ==&quot;Poor&quot;)</code></pre>
+</div>
+<div id="map-1" class="section level2">
+<h2>Map 1</h2>
+<p>If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).</p>
+<pre class="r"><code>#create color palette for condition
+pal &lt;- colorFactor(c(&quot;goldenrod1&quot;, &quot;forestgreen&quot;, &quot;tomato&quot;), 
+                   domain = c(&quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;))
+
+#creating map 1
+map1 &lt;- leaflet(data = thpl, options = leafletOptions(minZoom = 10, maxZoom = 21)) %&gt;% 
+  setView(lng = -122.6, lat = 45.5, zoom = 11) %&gt;%
+  addProviderTiles(providers$Stamen.Toner) %&gt;%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+             popup=paste(&quot;Collected by:&quot;, thpl$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thpl$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thpl$DBH), 
+             color=~pal(Condition), 
+             clusterOptions = markerClusterOptions(disableClusteringAtZoom=14), 
+             stroke = TRUE, fillOpacity = 0.7, radius = 3) %&gt;%
+  addLegend(&quot;bottomright&quot;, pal = pal, 
+            values= ~Condition,
+            title = &quot;Condition&quot;,
+            opacity = 1)
+
+frameWidget(map1, width = &quot;100%&quot;)</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_map 1.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="map-2" class="section level2">
+<h2>Map 2</h2>
+<p>If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).</p>
+<p>You can also sort the map by condition by checking/unchecking the boxes in the upper righthand corner</p>
+<pre class="r"><code>#creating map 2
+map2 &lt;- leaflet(options = leafletOptions(minZoom = 11, maxZoom = 21)) %&gt;%
+  addTiles() %&gt;% 
+  addProviderTiles(providers$CartoDB.Positron) %&gt;%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
+      popup=paste(&quot;Collected by:&quot;, thplgood$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thplgood$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thplgood$DBH),
+      data = thplgood, radius = 4,
+      color = &quot;forestgreen&quot;, stroke=FALSE,
+      fillOpacity = 0.6, 
+      group = &quot;Good&quot;) %&gt;%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+      popup=paste(&quot;Collected by:&quot;, thplfair$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thplfair$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thplfair$DBH),
+      data = thplfair, radius = 4,
+      color = &quot;gold&quot;, stroke=FALSE,
+      fillOpacity = 0.6,
+      group = &quot;Fair&quot;) %&gt;%
+   addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+      popup=paste(&quot;Collected by:&quot;, thplpoor$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thplpoor$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thplpoor$DBH),
+      data = thplpoor, radius = 4,
+      color = &quot;tomato&quot;, stroke=FALSE,
+      fillOpacity = 0.6,
+      group = &quot;Poor&quot;) %&gt;%
+ addLayersControl(
+      overlayGroups = c(&quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;),
+      options = layersControlOptions(collapsed = FALSE))
+
+frameWidget(map2, width = &quot;100%&quot;)</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_map 2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
