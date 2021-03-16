@@ -1,8 +1,8 @@
 ---
-title: Hi Hugo
+title: Hello World
 author: Ingrid Zoll
 date: '2021-03-15'
-slug: hi-hugo
+slug: hello-world
 categories: []
 tags: []
 subtitle: ''
