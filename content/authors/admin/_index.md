@@ -1,5 +1,5 @@
 ---
-bio: Educational Technology Consultant and biology undergraduate student
+bio: 
 education:
   courses:
   - course: BA in Biology
