@@ -23,11 +23,11 @@ date_format: Jan 2006
 #   Leave `date_end` empty if it's your current employer.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 experience:
-  - title: CEO
-    company: GenCoin
+  - title: Educational Technology Consultant
+    company: Reed College mLab
     company_url: ''
-    location: California
-    date_start: '2017-01-01'
+    location: Portland, OR
+    date_start: '2020-09-01'
     date_end: ''
     description: |2-
         Responsibilities include:
@@ -36,11 +36,19 @@ experience:
         * Modelling
         * Deploying
         
-  - title: Professor
-    company: University X
+  - title: Genetics Teaching Assistant
+    company: Reed College, Professor Sarah Schaack
     company_url: ''
-    location: California
-    date_start: '2016-01-01'
-    date_end: '2016-12-31'
-    description: Taught electronic engineering and researched semiconductor physics.
+    location: Portland, OR
+    date_start: '2021-01-01'
+    date_end: ''
+    description: Add description
+
+  - title: Library Page
+    company: Reed College Hauser Library
+    company_url: ''
+    location: Portland, OR
+    date_start: '2018-09-01'
+    date_end: '2021-01-01'
+    description: Add description
 ---
