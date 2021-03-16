@@ -88,6 +88,7 @@ map1 <- leaflet(data = thpl, options = leafletOptions(minZoom = 10, maxZoom = 21
             opacity = 1)
 
 frameWidget(map1, width = "100%")
+htmlwidgets::saveWidget(frameableWidget(map1),'leaflet1.html')
 ```
 
 ```{r, eval=FALSE, include=FALSE}
@@ -136,6 +137,7 @@ map2 <- leaflet(options = leafletOptions(minZoom = 11, maxZoom = 21)) %>%
       options = layersControlOptions(collapsed = FALSE))
 
 frameWidget(map2, width = "100%")
+htmlwidgets::saveWidget(frameableWidget(map2),'leaflet2.html')
 ```
 
 
