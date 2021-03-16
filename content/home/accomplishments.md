@@ -23,28 +23,44 @@ date_format: Jan 2006
 #   Leave other parameters empty if not required.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 item:
-- certificate_url: https://www.coursera.org
+- certificate_url: 
   date_end: ""
-  date_start: "2018-10-01"
-  description: ""
-  organization: Coursera
-  organization_url: https://www.coursera.org
-  title: Neural Networks and Deep Learning
+  date_start: "2020-11-02"
+  description: 
+  organization: Data Visualization Contest, Reed College Statistics Department 
+  organization_url: 
+  title: Most Informative Data Visualization
   url: ""
-- certificate_url: https://www.edx.org
+- certificate_url: 
   date_end: ""
-  date_start: "2018-03-01"
-  description: Formulated informed blockchain models, hypotheses, and use cases.
-  organization: edX
-  organization_url: https://www.edx.org
-  title: Blockchain Fundamentals
-  url: https://www.edx.org/professional-certificate/uc-berkeleyx-blockchain-fundamentals
-- certificate_url: https://www.datacamp.com
-  date_end: "2017-12-21"
-  date_start: "2017-07-01"
+  date_start: "2020-09-02"
+  description: 
+  organization: Prof. Suzy Renn’s Animal Behavior Lab, Reed College
+  organization_url: 
+  title: Best Pipetter
+  url: 
+- certificate_url: 
+  date_end: "2021-05-01"
+  date_start: "2018-09-01"
   description: ""
-  organization: DataCamp
-  organization_url: https://www.datacamp.com
-  title: 'Object-Oriented Programming in R: S3 and R6 Course'
+  organization: Reed College, 2018-2019 and 2019-2020
+  organization_url: 
+  title: Commendation for Excellence in Scholarship
+  url: ""
+- certificate_url: 
+  date_end: "2021-05-01"
+  date_start: "2019-09-01"
+  description: ""
+  organization: Reed College
+  organization_url: 
+  title: Gion Family Scholarship
+  url: ""
+- certificate_url: 
+  date_end: ""
+  date_start: "2020-05-01"
+  description: ""
+  organization: Reed College, Ramirez Lab
+  organization_url: 
+  title: Sandy River Gorge Field Study Fellowship
   url: ""
 ---

@@ -11,10 +11,10 @@ main:
     url: '#posts'
     weight: 20
   - name: Projects
-    url: '#projects'
+    url: project/
     weight: 30
-  - name: Course Work
-    url: courses/
+  - name: Accomplishments
+    url: '#accomplishments'
     weight: 50
   - name: Contact
     url: '#contact'

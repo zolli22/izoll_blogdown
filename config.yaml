@@ -6,7 +6,7 @@ theme: "starter-academic"
 
 title: Ingrid Zoll # Website name
 baseurl: 'https://itlzoll.netlify.app' # Website URL
-copyright: '' # Footer text, e.g. '© {year} Me'
+copyright: '© 2021, Ingrid Zoll' # Footer text, e.g. '© {year} Me'
 
 ############################
 ## LANGUAGE

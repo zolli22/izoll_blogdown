@@ -8,9 +8,10 @@ education:
 email: ""
 highlight_name: false
 interests:
-- Artificial Intelligence
-- Computational Linguistics
-- Information Retrieval
+- Data Ethics
+- Computational Biology
+- Tree Science
+- Data Visualization
 organizations:
 - name: Reed College
   #url: https://www.stanford.edu/
@@ -40,4 +41,4 @@ title: Ingrid Zoll
 
 I am an educational technology consultant and biology undergraduate student at Reed College.
 
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "media/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
+{{< icon name="download" pack="fas" >}} Download my {{< staticref "media/Ingrid Zoll resume.pdf" "newtab" >}}resume{{< /staticref >}}.

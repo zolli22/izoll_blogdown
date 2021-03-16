@@ -1,11 +1,14 @@
 ---
-date: "2016-04-27T00:00:00Z"
-external_link: http://example.org
+date: "2021-03-15T00:00:00Z"
+external_link: https://www.reed.edu/data-at-reed/resources/R/index.html
 image:
-  caption: Photo by Toa Heftiba on Unsplash
+  caption: Courtesy of Reed College Special Collections
   focal_point: Smart
-summary: An example of linking directly to an external project website using `external_link`.
+summary: A resource for R documentation and tutorials, created by the mLab at Reed College
 tags:
-- Demo
-title: External Project
+- Documentation
+- RStudio
+- mLab
+- Data@Reed
+title: Data@Reed R Resources
 ---
