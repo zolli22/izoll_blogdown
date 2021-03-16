@@ -9,6 +9,8 @@ output:
     df_print: paged
 ---
 
+One of my favorite R data packages is pdxTrees. I've used it in many of my classes, and this summer, it became immensely useful in my research. Here's the short version: western red cedar trees are dying, and we're not sure why. Figuring out "why" is a long and intense process, but the first step was figuring out where the trees are located. Thanks to pdxTrees, I can easily find where all of the western redcedar trees in Portland are! Using this, I made two different leaflet maps. You can check them out below, as well as the code I used for the maps!
+
 ```{r libraries, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(leaflet)
@@ -64,7 +66,7 @@ thplpoor <- thpl %>%
 If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).
 
 
-```{r, message=FALSE, warning=FALSE}
+```{r map 1, message=FALSE, warning=FALSE}
 #create color palette for condition
 pal <- colorFactor(c("goldenrod1", "forestgreen", "tomato"), 
                    domain = c("Good", "Fair", "Poor"))
@@ -100,7 +102,7 @@ If you click on an individual dot which represents a single Western Redcedar tre
 
 You can also sort the map by condition by checking/unchecking the boxes in the upper righthand corner
 
-```{r, message=FALSE, warning=FALSE}
+```{r map 2, message=FALSE, warning=FALSE}
 #creating map 2
 map2 <- leaflet(options = leafletOptions(minZoom = 11, maxZoom = 21)) %>%
   addTiles() %>% 
