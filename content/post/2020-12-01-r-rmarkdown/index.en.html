@@ -1,50 +1,128 @@
 ---
-title: "Hello R Markdown"
-author: "Frida Gomam"
-date: 2020-12-01T21:13:14-05:00
+title: "Making Maps about Trees"
+author: "Ingrid Zoll"
+date: 2020-08-22T21:13:14-05:00
 categories: ["R"]
-tags: ["R Markdown", "plot", "regression"]
+tags: ["R Markdown", "mapping", "trees"]
+output:
+  html_document:
+    df_print: paged
 ---
 
 <script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+<script src="{{< blogdown/postref >}}index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="{{< blogdown/postref >}}index.en_files/pymjs/pym.v1.js"></script>
+<script src="{{< blogdown/postref >}}index.en_files/widgetframe-binding/widgetframe.js"></script>
 
 
-<div id="r-markdown" class="section level1">
-<h1>R Markdown</h1>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>You can embed an R code chunk like this:</p>
-<pre class="r"><code>summary(cars)
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
-fit &lt;- lm(dist ~ speed, data = cars)
-fit
-## 
-## Call:
-## lm(formula = dist ~ speed, data = cars)
-## 
-## Coefficients:
-## (Intercept)        speed  
-##     -17.579        3.932</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(leaflet)
+library(pdxTrees)
+library(forcats)
+library(widgetframe)</code></pre>
+<div id="western-redcedar-trees-in-portland-oregon" class="section level1">
+<h1>Western Redcedar trees in Portland Oregon</h1>
+<div id="data-from-the-portland-parks-tree-inventory" class="section level3">
+<h3>Data from the Portland Parks Tree Inventory</h3>
+<pre class="r"><code>#order: lon, lat, species, date, condition, common name, scientific name, family, collected by
+
+parks&lt;-get_pdxTrees_parks() #full data
+
+
+smallparks &lt;- parks %&gt;%
+  select(1, 2, 8, 7, 10, 9, 17, 5, 15, 6) %&gt;% #select columns, reorder
+  mutate(source=&quot;park&quot;)
+
+streets&lt;-get_pdxTrees_streets() #full data
+
+smallstreets&lt;- streets %&gt;%
+  select(22, 23, 3, 2, 5, 18, 15, 16, 14, 4) %&gt;% #select columns, reorder 
+  rename(&quot;Scientific_Name&quot;=&quot;Scientific&quot;) %&gt;%
+  mutate(source=&quot;street&quot;)
+
+
+pdxTrees &lt;- bind_rows(smallparks, smallstreets) #join</code></pre>
+<pre class="r"><code>thpl &lt;- pdxTrees %&gt;%
+  filter(Species==&quot;THPL&quot;) %&gt;%
+  filter(!is.na(Collected_By))
+
+thpl$Condition &lt;- factor(thpl$Condition) %&gt;%
+  fct_relevel(c(&quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;))
+
+thplgood &lt;- thpl %&gt;%
+  filter(Condition ==&quot;Good&quot;)
+
+thplfair &lt;- thpl %&gt;%
+  filter(Condition ==&quot;Fair&quot;)
+
+thplpoor &lt;- thpl %&gt;%
+  filter(Condition ==&quot;Poor&quot;)</code></pre>
 </div>
-<div id="including-plots" class="section level1">
-<h1>Including Plots</h1>
-<p>You can also embed plots. See Figure <a href="#fig:pie">1</a> for example:</p>
-<pre class="r"><code>par(mar = c(0, 1, 0, 1))
-pie(
-  c(280, 60, 20),
-  c(&#39;Sky&#39;, &#39;Sunny side of pyramid&#39;, &#39;Shady side of pyramid&#39;),
-  col = c(&#39;#0292D8&#39;, &#39;#F7EA39&#39;, &#39;#C4B632&#39;),
-  init.angle = -50, border = NA
-)</code></pre>
-<div class="figure"><span id="fig:pie"></span>
-<img src="{{< blogdown/postref >}}index.en_files/figure-html/pie-1.png" alt="A fancy pie chart." width="672" />
-<p class="caption">
-Figure 1: A fancy pie chart.
-</p>
+<div id="map-1" class="section level2">
+<h2>Map 1</h2>
+<p>If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).</p>
+<pre class="r"><code>#create color palette for condition
+pal &lt;- colorFactor(c(&quot;goldenrod1&quot;, &quot;forestgreen&quot;, &quot;tomato&quot;), 
+                   domain = c(&quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;))
+
+#creating map 1
+map1 &lt;- leaflet(data = thpl, options = leafletOptions(minZoom = 10, maxZoom = 21)) %&gt;% 
+  setView(lng = -122.6, lat = 45.5, zoom = 11) %&gt;%
+  addProviderTiles(providers$Stamen.Toner) %&gt;%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+             popup=paste(&quot;Collected by:&quot;, thpl$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thpl$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thpl$DBH), 
+             color=~pal(Condition), 
+             clusterOptions = markerClusterOptions(disableClusteringAtZoom=14), 
+             stroke = TRUE, fillOpacity = 0.7, radius = 3) %&gt;%
+  addLegend(&quot;bottomright&quot;, pal = pal, 
+            values= ~Condition,
+            title = &quot;Condition&quot;,
+            opacity = 1)
+
+frameWidget(map1, width = &quot;100%&quot;)</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-1.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="map-2" class="section level2">
+<h2>Map 2</h2>
+<p>If you click on an individual dot which represents a single Western Redcedar tree in Portland, OR, you can see whether the data was collected by a staff member or a volunteer, the date it was collected, and the DBH (diameter at base height).</p>
+<p>You can also sort the map by condition by checking/unchecking the boxes in the upper righthand corner</p>
+<pre class="r"><code>#creating map 2
+map2 &lt;- leaflet(options = leafletOptions(minZoom = 11, maxZoom = 21)) %&gt;%
+  addTiles() %&gt;% 
+  addProviderTiles(providers$CartoDB.Positron) %&gt;%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
+      popup=paste(&quot;Collected by:&quot;, thplgood$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thplgood$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thplgood$DBH),
+      data = thplgood, radius = 4,
+      color = &quot;forestgreen&quot;, stroke=FALSE,
+      fillOpacity = 0.6, 
+      group = &quot;Good&quot;) %&gt;%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+      popup=paste(&quot;Collected by:&quot;, thplfair$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thplfair$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thplfair$DBH),
+      data = thplfair, radius = 4,
+      color = &quot;gold&quot;, stroke=FALSE,
+      fillOpacity = 0.6,
+      group = &quot;Fair&quot;) %&gt;%
+   addCircleMarkers(lng = ~Longitude, lat = ~Latitude, 
+      popup=paste(&quot;Collected by:&quot;, thplpoor$Collected_By, &quot;&lt;br&gt;&quot;,
+                           &quot;Date:&quot;, thplpoor$Inventory_Date, &quot;&lt;br&gt;&quot;,
+                           &quot;DBH:&quot;, thplpoor$DBH),
+      data = thplpoor, radius = 4,
+      color = &quot;tomato&quot;, stroke=FALSE,
+      fillOpacity = 0.6,
+      group = &quot;Poor&quot;) %&gt;%
+ addLayersControl(
+      overlayGroups = c(&quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;),
+      options = layersControlOptions(collapsed = FALSE))
+
+frameWidget(map2, width = &quot;100%&quot;)</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-3.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
