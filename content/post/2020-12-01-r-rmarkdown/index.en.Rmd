@@ -4,9 +4,7 @@ author: "Ingrid Zoll"
 date: 2020-08-22T21:13:14-05:00
 categories: ["R"]
 tags: ["R Markdown", "mapping", "trees"]
-output:
-  html_document:
-    df_print: paged
+
 ---
 
 One of my favorite R data packages is pdxTrees. I've used it in many of my classes, and this summer, it became immensely useful in my research. Here's the short version: western red cedar trees are dying, and we're not sure why. Figuring out "why" is a long and intense process, but the first step was figuring out where the trees are located. Thanks to pdxTrees, I can easily find where all of the western redcedar trees in Portland are! Using this, I made two different leaflet maps. You can check them out below, as well as the code I used for the maps!
@@ -17,6 +15,7 @@ library(leaflet)
 library(pdxTrees)
 library(forcats)
 library(widgetframe)
+library(htmltools)
 ```
 
 # Western Redcedar trees in Portland Oregon
@@ -88,14 +87,18 @@ map1 <- leaflet(data = thpl, options = leafletOptions(minZoom = 10, maxZoom = 21
             opacity = 1)
 
 frameWidget(map1, width = "100%")
+
+
+
+```
+
+
+
+```{r, echo=FALSE}
 htmlwidgets::saveWidget(frameableWidget(map1),'leaflet1.html')
 ```
 
-```{r, eval=FALSE, include=FALSE}
-popup=paste("Collected by:", trees$Collected_By, "<br>",
-                           "Date:", trees$Date, "<br>",
-                           "DBH:", trees$DBH)
-```
+
 
 ## Map 2
 
@@ -136,32 +139,18 @@ map2 <- leaflet(options = leafletOptions(minZoom = 11, maxZoom = 21)) %>%
       overlayGroups = c("Good", "Fair", "Poor"),
       options = layersControlOptions(collapsed = FALSE))
 
-frameWidget(map2, width = "100%")
+
+
+#currentWD <- getwd()
+#dir.create("static/leaflet")
+#setwd("static/leaflet")
+#htmlwidgets::saveWidget(map2,"leaflet2.html")
+#setwd(currentWD)
+
+#frameWidget(map2, width = "100")
 htmlwidgets::saveWidget(frameableWidget(map2),'leaflet2.html')
 ```
 
+<iframe seamless src="/static/leaflet/leafmap/leaflet1.html" width="100%" height="500"></iframe>
 
-```{r, eval=FALSE, include=FALSE}
-thpl %>%
-  count(Condition, Collected_By)
-
-thpl %>%
-  count(Collected_By)
-```
-
-```{r, eval=FALSE, include=FALSE}
-# 2-Way Frequency Table
-attach(thpl)
-mytable <- table(Condition,source) # A will be rows, B will be columns
-mytable # print table
-
-margin.table(mytable, 1) # A frequencies (summed over B)
-margin.table(mytable, 2) # B frequencies (summed over A)
-
-prop.table(mytable) # cell percentages
-prop.table(mytable, 1) # row percentages
-prop.table(mytable, 2) # column percentages
-
-chisq.test(mytable)
-```
-
+<iframe seamless src="/static/leaflet/leafmap/leaflet2.html" width="100%" height="500"></iframe>
