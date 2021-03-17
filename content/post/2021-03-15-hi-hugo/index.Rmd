@@ -15,7 +15,6 @@ image:
   focal_point: ''
   preview_only: no
 projects: []
-active: false
 ---
 
 ```{r}
@@ -88,6 +87,9 @@ map1 <- leaflet(data = thpl, options = leafletOptions(minZoom = 10, maxZoom = 21
             opacity = 1)
 
 frameWidget(map1, width = "100%")
+
+htmlwidgets::saveWidget(frameWidget(map1, width = "100%"), file = "map1.html", selfcontained = TRUE)
 ```
 
+<iframe src="content/post/2021-03-15-hi-hugo/map1/index.html"></iframe>
 

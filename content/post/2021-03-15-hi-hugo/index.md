@@ -99,5 +99,4 @@ frameWidget(map1, width = "100%")
 htmlwidgets::saveWidget(frameWidget(map1, width = "100%"), file = "map1.html", selfcontained = TRUE)
 ```
 
-<iframe src="content/post/2021-03-15-hi-hugo/map1/index.html">
-</iframe>
+<iframe src="content/post/2021-03-15-hi-hugo/map1/index.html"></iframe>
