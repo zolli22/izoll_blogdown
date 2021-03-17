@@ -5,9 +5,9 @@ title: "Data Science Blog posts"
 subtitle: ""
 summary: "Spring 2020 Data Science assignments"
 authors: [Ingrid Zoll]
-tags: [RStudio, visualization]
+tags: [RStudio, Visualization]
 categories: []
-date: 2021-03-16T17:55:19-07:00
+date: 2021-03-10T17:55:19-07:00
 lastmod: 2021-03-16T17:55:19-07:00
 featured: false
 draft: false
@@ -28,7 +28,7 @@ image:
 projects: []
 ---
 
-As part of my data science class with Professor Kelly McConville in spring 2020, I contributed to a series of blog posts for my class assignments.
+As part of my data science class with Professor Kelly McConville in spring 2020, I contributed to a series of blog posts for my class assignments. I've attached the blog posts and corresponding github repos below. Enjoy!
 
 For the first assignment I created buffaloTrees, a data package for the inventorized trees in Buffalo, NY. This dataset comprises all street trees within the City of Buffalo.
 
@@ -40,4 +40,7 @@ The second assignment was an analysis of different happiness-related datasets wi
 - {{< icon name="book-open" pack="fas" >}} [blog post](https://www.reed.edu/math/241/2020/04/28/analyzing-world-happiness/)
 - {{< icon name="github" pack="fab" >}} [github repo](https://github.com/zolli22/analyzing-world-happiness)
 
-Lastly, for the final project, 
+Lastly, for the final project, my partner and I used a few different packages (`brickr`, `circlepackR`, and `treemap` to name a few) to look at legos and data related to legos! This was my favorite project that I did for the class, especially the work with `brickr`. 
+
+- {{< icon name="book-open" pack="fas" >}} [blog post](https://www.reed.edu/math/241/2020/05/25/blego-the-lego-blog/)
+- {{< icon name="github" pack="fab" >}} [github repo](https://github.com/zolli22/lego_data_project)
