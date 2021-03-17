@@ -39,6 +39,8 @@ superuser: true
 title: Ingrid Zoll
 ---
 
-I am an educational technology consultant and biology undergraduate student at Reed College.
+Hi! I'm Ingrid. I am a junior at Reed College, where I am majoring in biology and minoring in French. I am an educational technology consultant in the mLab, where I help students and faculty with various data projects. I love creating maps as well as effective/gorgeous/interesting data visualizations. I am passionate about data education and making coding/learning how to work with data more accessible and effective. 
+
+In my free time, I can be found baking bread, knitting, or messing around with different color pallets in R. 
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "media/Ingrid Zoll resume.pdf" "newtab" >}}resume{{< /staticref >}}.

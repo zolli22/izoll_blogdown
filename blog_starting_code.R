@@ -7,10 +7,11 @@ library(blogdown)
 #run this after restart!
 serve_site()
 
+blogdown::stop_server()
 
 #new post code
 blogdown::new_post(title = "Hi Hugo", 
-                   ext = '.Rmarkdown', 
+                   ext = '.Rmd', #or .md
                    subdir = "post")
 
 
@@ -18,4 +19,5 @@ blogdown::check_gitignore()
 blogdown::check_content()
 blogdown::check_netlify()
 blogdown::check_hugo()
+blogdown::check_site()
 

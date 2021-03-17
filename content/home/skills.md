@@ -42,4 +42,6 @@ feature:
 #  icon_pack = "custom"
 #  name = "Surfing"
 #  description = "90%"
+
+image: cherry.jpg
 ---

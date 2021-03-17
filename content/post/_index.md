@@ -2,7 +2,7 @@
 cms_exclude: true
 header:
   caption: ""
-  image: header.jpg
+  image: cherry.jpg
 title: Posts
 view: 2
 ---

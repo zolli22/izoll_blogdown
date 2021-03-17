@@ -6,6 +6,10 @@ widget: experience
 # This file represents a page section.
 headless: false
 
+header:
+  image: 
+  caption: 
+
 # Order that this section appears on the page.
 weight: 40
 
@@ -28,12 +32,12 @@ experience:
     location: Portland, OR
     date_start: '2020-09-01'
     date_end: ''
-    description: |2-
-        Responsibilities include:
+    description: #|2-
+       # Responsibilities include:
         
-        * Analysing
-        * Modelling
-        * Deploying
+      #  * Analysing 
+     #   * Modelling
+      #  * Deploying
         
   - title: Genetics Teaching Assistant
     company: Reed College, Professor Sarah Schaack
@@ -41,7 +45,7 @@ experience:
     location: Portland, OR
     date_start: '2021-01-01'
     date_end: ''
-    description: Add description
+    description: #Add description
 
   - title: Library Page
     company: Reed College Hauser Library
@@ -49,5 +53,5 @@ experience:
     location: Portland, OR
     date_start: '2018-09-01'
     date_end: '2021-01-01'
-    description: Add description
+    description: #Add description
 ---
