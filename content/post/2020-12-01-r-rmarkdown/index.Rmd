@@ -11,6 +11,8 @@ header:
 
 One of my favorite R data packages is pdxTrees. I've used it in many of my classes, and this summer, it became immensely useful in my research. Here's the short version: western red cedar trees are dying, and we're not sure why. Figuring out "why" is a long and intense process, but the first step was figuring out where the trees are located. Thanks to pdxTrees, I can easily find where all of the western redcedar trees in Portland are! Using this, I made two different leaflet maps. You can check them out below, as well as the code I used for the maps!
 
+I am having some trouble getting my leaflet maps to show up, so the maps can be seen [here](https://rpubs.com/zolli/pdx_thpl) instead! 
+
 ```{r libraries, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(leaflet)
