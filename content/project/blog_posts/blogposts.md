@@ -3,9 +3,9 @@
 
 title: "Data Science Blog posts"
 subtitle: ""
-summary: ""
+summary: "Spring 2020 Data Science assignments"
 authors: [Ingrid Zoll]
-tags: []
+tags: [RStudio, visualization]
 categories: []
 date: 2021-03-16T17:55:19-07:00
 lastmod: 2021-03-16T17:55:19-07:00
