@@ -1,0 +1,114 @@
+---
+title: Tidy Tuesday
+author: Ingrid Zoll
+date: '2021-03-18'
+slug: tidy-tuesday-march-16
+categories: []
+tags: [RStudio, tidytuesday]
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2021-03-18T11:59:19-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>For my first official TidyTuesday, I was extremely excited to see that the data was from Steam! I use Steam for a few games that I play- some of my favorites are Townscaper, Samorost, and Firewatch. They are all fairly small games which are played by very few people, so I wasn’t too surprised when they didn’t show up in the dataset. So that led to my first question: what games are people playing? What is popular now, and how has that changed with time?</p>
+<pre class="r"><code>library(tidytuesdayR)
+library(tidyverse)
+library(lubridate)
+library(ggdark)
+library(wesanderson)</code></pre>
+<pre class="r"><code># Get the Data
+tuesdata &lt;- tidytuesdayR::tt_load(&#39;2021-03-16&#39;)
+games &lt;- tuesdata$games</code></pre>
+<p>Question 1: For each month in the dataset (April 2013 - February 2021) what were the three most popular games?</p>
+<pre class="r"><code>mostpop_bymonth &lt;- games %&gt;%
+  unite(yearmonth, month:year)%&gt;%
+  mutate(date = my(yearmonth)) %&gt;%
+  group_by(date)%&gt;% 
+  top_n(3, avg) %&gt;% 
+  ungroup %&gt;%
+  add_count(gamename, name = &quot;count&quot;) %&gt;%
+  mutate(label = gamename, label = case_when(
+    count &lt; 10 ~ &quot;Other games&quot;,
+    count &gt; 10 ~ gamename)) %&gt;%
+  mutate(game = factor(label), game = fct_infreq(label)) %&gt;%
+  mutate(game = str_replace(game, &quot;PLAYERUNKNOWN&#39;S BATTLEGROUNDS&quot;, &quot;PUBG&quot;), 
+         game = str_replace(game, &quot;Counter-Strike: Global Offensive&quot;, &quot;CS GO&quot;))</code></pre>
+<pre class="r"><code>ggplot(mostpop_bymonth, aes(x=date, y=avg, fill=game))+
+  geom_col(position=&quot;stack&quot;)+
+  scale_fill_manual(values = wes_palette(&quot;Zissou1&quot;))+
+  dark_theme_gray()+
+  labs(caption = &quot;PUBG = PlayerUnknown&#39;s BattleGround \nCS GO = Counter-Strike: Global Offensive&quot;,
+       title= &quot;The Three Most Popular Games on Steam by Month&quot;, 
+       y=&quot;Average number of players at the same time&quot;, x=&quot;Date&quot;)</code></pre>
+<pre><code>## Inverted geom defaults of fill and color/colour.
+## To change them back, use invert_geom_defaults().</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>First thought: Wow, this looks cool!
+Second thought: but…. not a great way to show the data. Sigh.</p>
+<pre class="r"><code>ggplot(mostpop_bymonth, aes(x=date, y=avg, fill=game))+
+  geom_col(position=&quot;dodge&quot;)+
+  scale_fill_manual(values = wes_palette(&quot;Zissou1&quot;))+
+  dark_theme_gray() +
+  labs(caption = &quot;PUBG = PlayerUnknown&#39;s BattleGround \nCS GO = Counter-Strike: Global Offensive&quot;,
+       title= &quot;The Three Most Popular Games on Steam by Month&quot;, 
+       y=&quot;Average number of players at the same time&quot;, x=&quot;Date&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>What about… dodging them? Still cool looking, but still not an effective visualization. This graph does start to show us some patterns- PUBG was an insanely popular game in 2017 and 2018, dwarfing CS GO and Dota 2 (which were the most popular games by A LOT). So I wanted to take a closer look at these three games.</p>
+<pre class="r"><code>populargames &lt;- mostpop_bymonth %&gt;%
+  filter(game == &quot;CS GO&quot; | game == &quot;PUBG&quot;| game == &quot;Dota 2&quot;)</code></pre>
+<pre class="r"><code>ggplot(populargames, aes(x=date, y=avg))+
+  dark_theme_gray()+
+  scale_color_manual(name = &#39;Game&#39;, values =c(&#39;CS GO&#39;=&quot;#F21A00&quot;,&#39;Dota 2&#39;=&quot;#EBCC2A&quot;, &#39;PUBG&#39; = &quot;#3B9AB2&quot;),
+        labels = c(&quot;CS GO&quot;, &quot;Dota 2&quot;, &quot;PUBG&quot;))+
+  geom_linerange(aes(ymax=peak, ymin=avg, color=game), size=.25)+
+  geom_point(aes(y=peak, color=game), size=.7)+
+  geom_point(aes(y=avg, color=game), size=.7)+
+  labs(title=&quot;Three Most Popular Games&quot;, x=&quot;Date&quot;, y=&quot;Number of players&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+Here we have the averages and peaks for number of players for the three most popular games on Steam. And yes- PUBG really did dwarf Dota 2 and CS GO, only a few months after it was released.</p>
+<p>Next, I wanted to look at a game that I know and love: The Witcher 3- Wild Hunt. It’s a game (and TV show, and book) that was introduced to me by my boyfriend, and one I love to watch him play. It’s a gorgeous game with amazing story, and when Geralt, the main character, isn’t in active combat, I get to “drive him” with the controller.</p>
+<p><img src="geralt.jpg" width="512" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>witcher &lt;- games %&gt;%
+  filter(gamename == c(&quot;The Witcher 3: Wild Hunt&quot;)) %&gt;%
+  unite(yearmonth, month:year)%&gt;%
+  mutate(date = my(yearmonth))
+
+
+release &lt;- ymd(&quot;2019-12-20&quot;)
+label &lt;- ymd(&quot;2019-02-01&quot;)
+
+ggplot(witcher, aes(x=date, y=avg))+
+  theme(legend.position = &quot;bottom&quot;)+
+  scale_color_manual(name = &#39;Player Number \nMeasurement&#39;, values =c(&#39;gold&#39;=&quot;#E1AF00&quot;,&#39;skyblue3&#39;=&quot;#78B7C5&quot;), labels = c(&quot;Peak&quot;, &quot;Average&quot;))+
+  dark_theme_gray()+
+  geom_vline(aes(xintercept = release), color=&quot;grey95&quot;, linetype=&quot;dashed&quot;)+
+  labs(x=&quot;Date&quot;, y=&quot;Number of players at the same time&quot;)+
+  annotate(geom = &quot;text&quot;, x = label, y = 75000, 
+  label = &quot;Dec 20, 2019: Release of \n \&quot;The Witcher\&quot; TV show&quot;, color=&quot;grey94&quot;, size=3)+
+  geom_point(aes(y=peak, color=&quot;gold&quot;))+
+  geom_line(aes(color=&quot;skyblue3&quot;))+
+  labs(title=&quot;The Witcher 3: Wild Hunt&quot;, subtitle= &quot;Average and peak player numbers per month&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/witcher%201-1.png" width="672" /></p>
+<p>Initially when I looked at this graph, I noticed a few things: first, the massive spike in activity in late 2019/early 2020, and the smaller (but still notable) spike in the summer of 2016. The larger spike can be attributed to the release of The Witcher TV show on netflix, but the smaller peak took me longer to figure out. Steam has an annual summer sale, and by best guess is that the game went on sale in the summer of 2016, so many new players bought it and started to play.</p>
+<pre class="r"><code>ggplot(witcher, aes(x=date, y=gain))+
+  theme(legend.position = &quot;bottom&quot;)+
+  dark_theme_gray()+
+  geom_vline(aes(xintercept = release), color=&quot;grey95&quot;, linetype=&quot;dashed&quot;)+
+  labs(x=&quot;Date&quot;, y=&quot;Number of players at the same time&quot;)+
+  annotate(geom = &quot;text&quot;, x = label, y = 25000, 
+  label = &quot;Dec 20, 2019: Release of \n \&quot;The Witcher\&quot; TV show&quot;, color=&quot;grey94&quot;, size=3)+
+  geom_line(aes(y=avg), color=&quot;#EBCC2A&quot;)+
+  geom_col(aes(fill=&quot;gains&quot;), fill=&quot;#3B9AB2&quot;)+
+  labs(title=&quot;The Witcher 3: Wild Hunt&quot;, subtitle=&quot;Average number of players at the same time with montly gains or losses&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Lastly, I wanted to look at the gains (and losses) of player activity. There’s nothing too interesting in this graph, but I thought it added another cool visualization to this post.</p>
