@@ -36,7 +36,7 @@ library(wesanderson)
 tuesdata <- tidytuesdayR::tt_load('2021-03-16')
 games <- tuesdata$games
 ```
-### Question 1: For each month in the dataset (April 2013 - February 2021) what were the three most popular games? 
+Question 1: For each month in the dataset (April 2013 - February 2021) what were the three most popular games? 
 
 But first: some wrangling. 
 
