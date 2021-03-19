@@ -17,7 +17,8 @@ blogdown::new_post(title = "Tidy Tuesday - March 16",
 
 blogdown::check_gitignore()
 blogdown::check_content()
-blogdown::check_netlify()
 blogdown::check_hugo()
+blogdown::check_netlify()
 blogdown::check_site()
 
+blogdown::build_site(build_rmd = 'newfile')
