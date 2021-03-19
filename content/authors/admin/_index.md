@@ -43,4 +43,4 @@ Hi! I'm Ingrid. I am a junior at Reed College, where I am majoring in biology an
 
 In my free time, I can be found baking bread, knitting, or messing around with different color palettes in R. 
 
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "media/Ingrid Zoll resume.pdf" "newtab" >}}resume{{< /staticref >}}.
+{{< icon name="download" pack="fas" >}} Download my {{< staticref "media/march2021_resume_Ingrid_Zoll.pdf" "newtab" >}}resume{{< /staticref >}}.
