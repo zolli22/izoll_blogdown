@@ -5,7 +5,7 @@ widget: contact
 
 # This file represents a page section.
 headless: true
-
+active: true
 # Order that this section appears on the page.
 weight: 130
 
@@ -20,10 +20,10 @@ content:
   form:
     provider: formspree
     formspree:
-      id: test
+      id: 'https://formspree.io/f/xrgrzgpa'
     netlify:
       # Enable CAPTCHA challenge to reduce spam?
-      captcha: false
+      captcha: true
   
 design:
   columns: '2'

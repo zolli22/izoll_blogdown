@@ -13,9 +13,9 @@ main:
   - name: Projects
     url: project/
     weight: 30
-  - name: Experience and Awards
+  - name: Resume
     url: experience/
     weight: 50
-  - name: Contact
-    url: '#contact'
+  - name: Gallery
+    url: gallery/
     weight: 60
