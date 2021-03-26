@@ -108,7 +108,7 @@ world %>%
 ```
 
 
-```{r, fig.align='center', fig.width=10}
+```{r, fig.align='center'}
 big5 <- unvotes %>%
   filter(country_code == "US" | country_code == "RU" | country_code == "FR" | 
            country_code == "GB" | country_code == "CN") %>%
@@ -132,7 +132,7 @@ ggplot(big5, aes(x=country, y=prop, fill=vote))+
 ```
 
 
-```{r, fig.align='center', fig.width=10}
+```{r, fig.align='center'}
 votes_overtime <- unvotes %>%
   filter(country_code == "US" | country_code == "RU" | country_code == "FR" | 
            country_code == "GB" | country_code == "CN") %>%

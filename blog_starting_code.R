@@ -22,3 +22,5 @@ blogdown::check_netlify()
 blogdown::check_site()
 
 blogdown::build_site(build_rmd = 'newfile')
+
+blogdown::build_site(build_rmd = 'timestamp')
