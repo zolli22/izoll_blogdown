@@ -17,7 +17,12 @@ image:
 projects: []
 ---
 
-For this week's TidyTudesday, we were given data on UN votes. I've included the graphics I made and my code below!
+For this week's TidyTudesday, we were given data on UN votes. I wanted to look at a couple of main things: 
+- The percent of "yes" votes for each country, first for all votes, then for "important" votes (my first two visualizations) 
+- For the 5 permanent members of the UN Security council, the proportion of "yes" and "no" votes on different issues
+- For the same 5 countries, the proportion of "yes" votes over time for different issues. 
+
+I've included the graphics I made and my code below!
 
 Enjoy! 
 ```{r setup, include=FALSE}
