@@ -20,7 +20,13 @@ projects: []
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<p>For this week’s TidyTudesday, we were given data on UN votes. I’ve included the graphics I made and my code below!</p>
+<p>For this week’s TidyTudesday, we were given data on UN votes. I wanted to look at three main things:</p>
+<ol style="list-style-type: decimal">
+<li>The percent of “yes” votes for each country, first for all votes, then for “important” votes (my first two visualizations)</li>
+<li>For the 5 permanent members of the UN Security council, the proportion of “yes” and “no” votes on different issues</li>
+<li>For the same 5 countries, the proportion of “yes” votes over time for different issues.</li>
+</ol>
+<p>I’ve included the graphics I made and my code below!</p>
 <p>Enjoy!</p>
 <pre class="r"><code>library(tidytuesdayR)
 library(tidyverse)
@@ -85,7 +91,7 @@ world %&gt;%
   theme(axis.text = element_blank(), axis.ticks = element_blank())+
   labs(fill = &quot;Percent &#39;Yes&#39; votes:&quot;, title= &quot;Percent &#39;Yes&#39; votes on all UN votes&quot;)+
   ggsave(&quot;world.png&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>world %&gt;% 
   right_join(important_votes2,by=c(&quot;iso_a2&quot;=&quot;country_code&quot;)) %&gt;%
   ggplot()+
@@ -96,7 +102,7 @@ world %&gt;%
   theme(axis.text = element_blank(), axis.ticks = element_blank())+
   labs(fill = &quot;Percent &#39;Yes&#39; votes:&quot;, title= &quot;Percent &#39;Yes&#39; votes on &#39;important&#39; UN votes&quot;)+
   ggsave(&quot;world2.png&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-2.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>big5 &lt;- unvotes %&gt;%
   filter(country_code == &quot;US&quot; | country_code == &quot;RU&quot; | country_code == &quot;FR&quot; | 
            country_code == &quot;GB&quot; | country_code == &quot;CN&quot;) %&gt;%

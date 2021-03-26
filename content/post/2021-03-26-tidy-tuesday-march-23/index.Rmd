@@ -17,10 +17,11 @@ image:
 projects: []
 ---
 
-For this week's TidyTudesday, we were given data on UN votes. I wanted to look at a couple of main things: 
-- The percent of "yes" votes for each country, first for all votes, then for "important" votes (my first two visualizations) 
-- For the 5 permanent members of the UN Security council, the proportion of "yes" and "no" votes on different issues
-- For the same 5 countries, the proportion of "yes" votes over time for different issues. 
+For this week's TidyTudesday, we were given data on UN votes. I wanted to look at three main things:
+
+1. The percent of "yes" votes for each country, first for all votes, then for "important" votes (my first two visualizations) 
+2. For the 5 permanent members of the UN Security council, the proportion of "yes" and "no" votes on different issues
+2. For the same 5 countries, the proportion of "yes" votes over time for different issues. 
 
 I've included the graphics I made and my code below!
 
@@ -49,7 +50,7 @@ roll_calls <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience
 issues <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-23/issues.csv')
 ```
 
-```{r, message=FALSE, fig.align='center', fig.width=10}
+```{r, message=FALSE, fig.align='center'}
 important_votes <- roll_calls %>%
   left_join(unvotes) %>%
   left_join(issues) %>%
