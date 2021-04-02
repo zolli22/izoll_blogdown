@@ -1,0 +1,123 @@
+---
+title: "Makeup Shades - Tidy Tuesday, March 30"
+author: "Ingrid Zoll"
+date: '2021-04-01'
+slug: makeup-shades-tidy-tuesday-march-30
+categories: []
+tags:
+- tidytuesday
+- Rstudio
+- dataviz
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2021-04-01T19:31:29-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This week’s tidy tuesday provided makeup shade data, which was interesting and challenging to work with! With the given name categorizations, I decided to take a closer look at makeup names that were categorized as either rocks or gems, the common names within those groups, and their shades.</p>
+<pre class="r"><code>library(tidyverse)
+library(ggraph)
+library(igraph)
+library(stringr)</code></pre>
+<pre class="r"><code>allCategories &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-30/allCategories.csv&#39;)</code></pre>
+<div id="first-data-wrangling" class="section level3">
+<h3>First, data wrangling!</h3>
+<pre class="r"><code>gems &lt;- allCategories %&gt;%
+  filter(str_detect(categories, &quot;gem&quot;)) %&gt;%
+  distinct(brand, name, lightness, hex) %&gt;%
+  mutate(name_group = case_when(str_detect(name, &quot;ivo&quot;) ~ &quot;ivory&quot;,
+                                str_detect(name, &quot;amber&quot;) ~ &quot;amber&quot;,
+                                str_detect(name, &quot;alabaster&quot;) ~ &quot;alabaster&quot;,
+                                str_detect(name, &quot;shell&quot;) ~ &quot;shell&quot;,
+                                str_detect(name, &quot;pearl&quot;) ~ &quot;pearl&quot;,
+                                str_detect(name, &quot;bone&quot;) ~ &quot;bone&quot;, 
+                                TRUE ~ &quot;other&quot;)) %&gt;%
+  mutate(category = &quot;gem&quot;)
+
+
+rocks &lt;- allCategories %&gt;%
+  filter(str_detect(categories, &quot;rock&quot;)) %&gt;%
+  distinct(brand, name, lightness, hex)  %&gt;%
+  mutate(name_group = case_when(str_detect(name, &quot;sand&quot;) ~ &quot;sand&quot;,
+                                str_detect(name, &quot;sienna&quot;) ~ &quot;sienna&quot;,
+                                str_detect(name, &quot;desert&quot;) ~ &quot;desert&quot;,
+                                str_detect(name, &quot;pebble&quot;) ~ &quot;stone/pebble&quot;,
+                                str_detect(name, &quot;dune&quot;) ~ &quot;dune&quot;,
+                                str_detect(name, &quot;stone&quot;) ~ &quot;stone/pebble&quot;,
+                                TRUE ~ &quot;other&quot;)) %&gt;%
+  mutate(category = &quot;rock&quot;)
+
+
+full_data &lt;- rocks %&gt;%
+  full_join(gems)</code></pre>
+<pre><code>## Joining, by = c(&quot;brand&quot;, &quot;name&quot;, &quot;hex&quot;, &quot;lightness&quot;, &quot;name_group&quot;, &quot;category&quot;)</code></pre>
+<pre class="r"><code>full_count&lt;-full_data %&gt;%
+  group_by(category, name_group) %&gt;%
+  count(name_group) %&gt;%
+  mutate(lightness = 0.25)</code></pre>
+<p>Now, some graphing!</p>
+<pre class="r"><code>full_shades &lt;- full_data$hex
+
+ggplot(full_data, aes(x=name_group, y=lightness))+
+  geom_violin(color=&quot;black&quot;, fill=NA, size=.2)+
+  geom_point(shape=21, fill=full_shades, size=2, position=&quot;jitter&quot;, stroke=.3, alpha=.9)+
+  facet_grid(vars(category), scales=&quot;free&quot;)+
+  geom_label(data=full_count, aes(label=n), size=2.5)+
+  coord_flip()+
+  labs(x=&quot;name group&quot;, title=&quot;minerals in makeup&quot;, subtitle=&quot;rock and gem categorized makeup names and their shades&quot;)+
+  theme_minimal()+
+  ggsave(&quot;violin_dot_makeup.png&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/violin%20minerals%20chart-1.png" width="672" /></p>
+</div>
+<div id="lastly-some-fun-with-hierarchy-plots" class="section level3">
+<h3>Lastly, some fun with hierarchy plots!</h3>
+<p>Nodes are:<br />
+1. brand (10 randomly selected)<br />
+2. name group (as created in the above wrangling)<br />
+3. makeup name</p>
+<p>I’m still getting the hang of using <code>ggraph</code> so these aren’t the best graphs, but I had a lot of fun making them!</p>
+<pre class="r"><code>smallbrands &lt;- count(full_data, brand) %&gt;%
+  arrange(desc(n)) %&gt;%
+  sample_n(10)
+
+brandlist &lt;- smallbrands$brand</code></pre>
+<pre class="r"><code>full_data2 &lt;- full_data %&gt;%
+  filter(brand %in% c(brandlist)) %&gt;%
+  mutate(origin = &quot;origin&quot;)
+
+set1 &lt;- full_data2 %&gt;%
+  select(origin, brand) %&gt;%
+  distinct() %&gt;%
+  rename(&quot;from&quot;=&quot;origin&quot;, &quot;to&quot;=&quot;brand&quot;)
+
+set2 &lt;- full_data2 %&gt;%
+  select(brand, name_group) %&gt;%
+  rename(&quot;from&quot; = &quot;brand&quot;, &quot;to&quot;=&quot;name_group&quot;)
+
+set3 &lt;- full_data2 %&gt;%
+  select(name_group, name) %&gt;%
+  rename(&quot;from&quot;=&quot;name_group&quot;, &quot;to&quot;=&quot;name&quot;)
+
+hierarchy &lt;- rbind(set1, set2, set3)
+vertices &lt;- data.frame(name = unique(c(as.character(hierarchy$from), as.character(hierarchy$to))) ) 
+mygraph &lt;- graph_from_data_frame( hierarchy, vertices=vertices)</code></pre>
+<pre class="r"><code>ggraph(mygraph, layout=&#39;dendrogram&#39;, circular=FALSE) + 
+  geom_edge_diagonal() +
+  theme_void() +
+  theme(legend.position=&quot;none&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>ggraph(mygraph, layout = &#39;circlepack&#39;) + 
+  geom_node_circle(aes(fill = depth)) +
+  scale_fill_distiller(palette = &quot;RdPu&quot;) +
+  theme_void()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+</div>

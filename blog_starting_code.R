@@ -10,7 +10,7 @@ serve_site()
 blogdown::stop_server()
 
 #new post code
-blogdown::new_post(title = "Tidy Tuesday - March 23", 
+blogdown::new_post(title = "Makeup Shades - Tidy Tuesday, March 30", 
                    ext = '.Rmd', #or .md
                    subdir = "post")
 
