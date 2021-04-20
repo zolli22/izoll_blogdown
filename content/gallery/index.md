@@ -13,6 +13,6 @@ title: Gallery
 subtitle:
 ---
 
-Gallery: coming soon!
+All of these images are work that I did as part of the 30 Day Chart Challenge. These charts (and some I did not include here), along with their respective code and data sources, can also be seen on my [twitter!](https://twitter.com/ingrid_zoll/status/1384226763270623235)
 
 {{< gallery >}}
